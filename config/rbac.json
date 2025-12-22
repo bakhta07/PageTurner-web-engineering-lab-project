@@ -1,0 +1,8 @@
+{
+  "admin": {
+    "routes": ["/admin"]
+  },
+  "customer": {
+    "routes": ["/catalog", "/cart"]
+  }
+}
