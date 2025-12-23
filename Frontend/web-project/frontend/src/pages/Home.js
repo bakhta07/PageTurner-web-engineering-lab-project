@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { API_URL } from "../config";
 
 const Home = () => {
   const [featuredBooks, setFeaturedBooks] = useState([]);
@@ -7,7 +8,7 @@ const Home = () => {
   useEffect(() => {
     const fetchBooks = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/books?limit=4");
+        const res = await fetch(`${API_URL}/books?limit=4`);
         const data = await res.json();
         setFeaturedBooks(data.books || []);
       } catch (err) {

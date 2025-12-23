@@ -1,5 +1,6 @@
 import { useState } from "react";
 import toast from "react-hot-toast";
+import { API_URL } from "../config";
 import { useAuth } from "../context/AuthContext";
 
 const RequestBook = () => {
@@ -15,7 +16,7 @@ const RequestBook = () => {
         }
 
         try {
-            const res = await fetch("http://localhost:5000/api/requests", {
+            const res = await fetch(`${API_URL}/requests`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

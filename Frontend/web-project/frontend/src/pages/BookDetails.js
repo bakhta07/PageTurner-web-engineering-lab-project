@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
-import { useCart } from "../context/CartContext"; // For Add to Cart
+import { useCart } from "../context/CartContext";
+import { API_URL } from "../config"; // For Add to Cart
 import toast from "react-hot-toast";
 import { FaStar, FaShoppingCart, FaArrowLeft } from "react-icons/fa";
 
@@ -19,7 +20,7 @@ const BookDetails = () => {
     useEffect(() => {
         const fetchBook = async () => {
             try {
-                const res = await fetch(`http://localhost:5000/api/books/${id}`);
+                const res = await fetch(`${API_URL}/books/${id}`);
                 const data = await res.json();
                 setBook(data);
             } catch (e) { console.error(e); }
@@ -34,7 +35,7 @@ const BookDetails = () => {
             return;
         }
         try {
-            const res = await fetch(`http://localhost:5000/api/books/${id}/reviews`, {
+            const res = await fetch(`${API_URL}/books/${id}/reviews`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

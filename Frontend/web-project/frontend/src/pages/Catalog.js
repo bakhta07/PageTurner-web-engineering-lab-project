@@ -12,7 +12,7 @@ const Catalog = () => {
   useEffect(() => {
     const fetchBooks = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/books?limit=100");
+        const res = await fetch(`${API_URL}/books?limit=100`);
         const data = await res.json();
         setBooks(data.books || []);
       } catch (err) { console.error(err); }
@@ -26,7 +26,7 @@ const Catalog = () => {
   useEffect(() => {
     // 1. Fetch Dynamic Recommendations if Logged In
     if (user) {
-      fetch("http://localhost:5000/api/books/recommendations", {
+      fetch(`${API_URL}/books/recommendations`, {
         headers: { Authorization: `Bearer ${user.token}` }
       })
         .then(res => res.json())
