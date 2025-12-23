@@ -9,8 +9,13 @@ export const CartProvider = ({ children }) => {
 
   // Load cart from localStorage (initial)
   const [cart, setCart] = useState(() => {
-    const savedCart = localStorage.getItem("cart");
-    return savedCart ? JSON.parse(savedCart) : [];
+    try {
+      const savedCart = localStorage.getItem("cart");
+      return savedCart ? JSON.parse(savedCart) : [];
+    } catch (err) {
+      console.error("Failed to parse cart from local storage", err);
+      return [];
+    }
   });
 
   // Sync with DB when user logs in

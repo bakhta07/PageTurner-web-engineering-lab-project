@@ -1,6 +1,7 @@
 import { AuthProvider } from "./context/AuthContext";
 import { OrderProvider } from "./context/OrderContext";
 import { BooksProvider } from "./context/BookContext";
+import { CartProvider } from "./context/CartContext";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
@@ -25,41 +26,43 @@ function App() {
     <Router>
       <Toaster position="top-center" containerStyle={{ zIndex: 99999 }} />
       <AuthProvider>
-        <BooksProvider>
-          <OrderProvider>
-            <Navbar />
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/admin-portal" element={<AdminLogin />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="/oauth-success" element={<OAuthSuccess />} />
-              <Route path="/product/:id" element={<BookDetails />} />
-              <Route path="/my-orders" element={<MyOrders />} />
-              <Route path="/request-book" element={<RequestBook />} />
+        <CartProvider>
+          <BooksProvider>
+            <OrderProvider>
+              <Navbar />
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/admin-portal" element={<AdminLogin />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/oauth-success" element={<OAuthSuccess />} />
+                <Route path="/product/:id" element={<BookDetails />} />
+                <Route path="/my-orders" element={<MyOrders />} />
+                <Route path="/request-book" element={<RequestBook />} />
 
-              <Route path="/catalog" element={<Catalog />} />
-              <Route path="/cart" element={<Cart />} />
-              <Route
-                path="/checkout"
-                element={
-                  <ProtectedRoute>
-                    <Checkout />
-                  </ProtectedRoute>
-                }
-              />
+                <Route path="/catalog" element={<Catalog />} />
+                <Route path="/cart" element={<Cart />} />
+                <Route
+                  path="/checkout"
+                  element={
+                    <ProtectedRoute>
+                      <Checkout />
+                    </ProtectedRoute>
+                  }
+                />
 
-              <Route
-                path="/admin"
-                element={
-                  <AdminRoute>
-                    <AdminDashboard />
-                  </AdminRoute>
-                }
-              />
-            </Routes>
-          </OrderProvider>
-        </BooksProvider>
+                <Route
+                  path="/admin"
+                  element={
+                    <AdminRoute>
+                      <AdminDashboard />
+                    </AdminRoute>
+                  }
+                />
+              </Routes>
+            </OrderProvider>
+          </BooksProvider>
+        </CartProvider>
       </AuthProvider>
     </Router>
   );
