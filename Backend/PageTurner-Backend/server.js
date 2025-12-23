@@ -62,6 +62,13 @@ setInterval(async () => {
 }, 60 * 1000); // Run every minute
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT} `);
-});
+
+// Export for Vercel
+module.exports = app;
+
+// Only listen if run directly (locally)
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT} `);
+  });
+}
