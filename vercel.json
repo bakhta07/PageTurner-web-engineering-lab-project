@@ -19,8 +19,11 @@
             "dest": "/Backend/PageTurner-Backend/server.js"
         },
         {
+            "handle": "filesystem"
+        },
+        {
             "src": "/(.*)",
-            "dest": "/Frontend/web-project/frontend/$1"
+            "dest": "/Frontend/web-project/frontend/index.html"
         }
     ]
 }
