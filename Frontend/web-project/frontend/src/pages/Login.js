@@ -157,9 +157,7 @@ const Login = () => {
           </button>
         </form>
 
-        import {AUTH_URL} from "../config";
 
-        // ... inside Login component ...
         <div style={{ margin: "20px 0", borderTop: "1px solid #ccc", paddingTop: "20px" }}>
           <a href={`${AUTH_URL}/google`} style={styles.googleBtn}>
             Sign in with Google

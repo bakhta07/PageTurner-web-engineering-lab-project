@@ -9,8 +9,6 @@ const Catalog = () => {
   const { addToCart } = useCart();
   const navigate = useNavigate();
   const [books, setBooks] = useState([]);
-  const [loading, setLoading] = useState(true);
-
   useEffect(() => {
     const fetchBooks = async () => {
       try {
@@ -18,7 +16,6 @@ const Catalog = () => {
         const data = await res.json();
         setBooks(data.books || []);
       } catch (err) { console.error(err); }
-      finally { setLoading(false); }
     };
     fetchBooks();
   }, []);
@@ -163,14 +160,12 @@ const Catalog = () => {
 
   useEffect(() => {
     const delayDebounceFn = setTimeout(async () => {
-      setLoading(true);
       try {
         const query = searchTerm ? `?keyword=${searchTerm}` : "?limit=100";
         const res = await fetch(`${API_URL}/api/books${query}`);
         const data = await res.json();
         setBooks(data.books || []);
       } catch (err) { console.error(err); }
-      finally { setLoading(false); }
     }, 500);
 
     return () => clearTimeout(delayDebounceFn);
