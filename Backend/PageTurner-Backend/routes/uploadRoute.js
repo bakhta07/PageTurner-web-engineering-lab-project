@@ -3,9 +3,16 @@ const multer = require('multer');
 const path = require('path');
 const router = express.Router();
 
+const os = require('os');
+
 // Set storage engine
 const storage = multer.diskStorage({
-    destination: './uploads/',
+    destination: function (req, file, cb) {
+        // Use /tmp on Vercel (or any read-only env) or fall back to ./uploads locally
+        // Vercel serverless functions allow writing to /tmp
+        const uploadPath = process.env.NODE_ENV === 'production' ? '/tmp' : './uploads/';
+        cb(null, uploadPath);
+    },
     filename: function (req, file, cb) {
         cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
     }
