@@ -1,25 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>PageTurner</title>
-    <script>
-      window.onerror = function (message, source, lineno, colno, error) {
-        var errorContainer = document.createElement("div");
-        errorContainer.style.cssText = "position: fixed; top: 0; left: 0; width: 100%; background: #ff0000; color: #fff; z-index: 10000; padding: 20px; font-family: monospace; font-weight: bold; word-break: break-all;";
-        errorContainer.innerText = "CRITICAL ERROR: " + message + "\nLine: " + lineno + "\nSource: " + source;
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PageTurner</title>
+  <script>
+    // Enhanced Error Logger - Catches Runtime + Resource Errors (404s)
+    window.addEventListener('error', function (e) {
+      var errorContainer = document.getElementById('critical-error-banner');
+      if (!errorContainer) {
+        errorContainer = document.createElement("div");
+        errorContainer.id = 'critical-error-banner';
+        errorContainer.style.cssText = "position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #ff0000; color: #fff; z-index: 10000; padding: 20px; font-family: monospace; font-weight: bold; word-break: break-all; overflow: auto;";
         document.body.appendChild(errorContainer);
-      };
-      window.onunhandledrejection = function (event) {
-        var errorContainer = document.createElement("div");
-         errorContainer.style.cssText = "position: fixed; top: 100px; left: 0; width: 100%; background: #cc0000; color: #fff; z-index: 10000; padding: 20px; font-family: monospace; font-weight: bold; word-break: break-all;";
-        errorContainer.innerText = "UNHANDLED PROMISE: " + event.reason;
+      }
+
+      var msg = '';
+      if (e.target && (e.target.tagName === 'SCRIPT' || e.target.tagName === 'LINK' || e.target.tagName === 'IMG')) {
+        msg = 'RESOURCE LOAD FAILED: ' + e.target.tagName + ' src="' + (e.target.src || e.target.href) + '"';
+      } else {
+        msg = 'RUNTIME ERROR: ' + (e.message || e);
+      }
+      errorContainer.innerText += msg + '\n----------------\n';
+    }, true); // TRUE = Capture Phase (Required for loading errors)
+
+    window.addEventListener('unhandledrejection', function (event) {
+      var errorContainer = document.getElementById('critical-error-banner');
+      if (!errorContainer) {
+        errorContainer = document.createElement("div");
+        errorContainer.id = 'critical-error-banner';
+        errorContainer.style.cssText = "position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #ff0000; color: #fff; z-index: 10000; padding: 20px; font-family: monospace; font-weight: bold; word-break: break-all; overflow: auto;";
         document.body.appendChild(errorContainer);
-      };
-    </script>
-  </head>
-  <body>
-    <div id="root"></div>  <!-- THIS IS REQUIRED -->
-  </body>
+      }
+      errorContainer.innerText += "UNHANDLED PROMISE: " + event.reason + '\n----------------\n';
+    });
+  </script>
+</head>
+
+<body>
+  <div id="root"></div> <!-- THIS IS REQUIRED -->
+</body>
+
 </html>
