@@ -30,7 +30,7 @@ const Login = () => {
         await logout(); // Ensure logout completes
         localStorage.removeItem("user"); // Double clean
 
-        toast.error("Admins must use the secure Admin Portal.");
+        toast.error("Invalid email or password");
         // Optional: redirect them there or just stay here
         return; // Stop execution
       }
