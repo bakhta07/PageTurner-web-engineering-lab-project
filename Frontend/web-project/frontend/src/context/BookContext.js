@@ -6,8 +6,8 @@ const BookContext = createContext();
 
 export const BooksProvider = ({ children }) => {
   const [books, setBooks] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // Fetch books on mount
   // Fetch books on mount
   useEffect(() => {
     const fetchBooks = async () => {
@@ -17,6 +17,8 @@ export const BooksProvider = ({ children }) => {
         setBooks(data);
       } catch (error) {
         console.error("Error fetching books:", error);
+      } finally {
+        setLoading(false);
       }
     };
     fetchBooks();
@@ -27,7 +29,7 @@ export const BooksProvider = ({ children }) => {
       const user = JSON.parse(localStorage.getItem("user"));
       const token = user?.token;
 
-      const res = await fetch("http://localhost:5000/api/books", {
+      const res = await fetch(`${API_URL}/books`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -48,10 +50,10 @@ export const BooksProvider = ({ children }) => {
   };
 
   return (
-    <BooksContext.Provider value={{ books, loading, addBook }}>
+    <BookContext.Provider value={{ books, loading, addBook }}>
       {children}
-    </BooksContext.Provider>
+    </BookContext.Provider>
   );
 };
 
-export const useBooks = () => useContext(BooksContext);
+export const useBooks = () => useContext(BookContext);
