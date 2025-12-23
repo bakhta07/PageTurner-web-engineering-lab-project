@@ -84,7 +84,7 @@ router.get(
   (req, res) => {
     const token = generateToken(req.user._id);
     // Redirect to frontend with token
-    res.redirect(`http://localhost:3000/oauth-success?token=${token}&role=${req.user.role}`);
+    res.redirect(`/oauth-success?token=${token}&role=${req.user.role}`);
   }
 );
 
