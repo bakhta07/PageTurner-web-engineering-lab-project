@@ -39,9 +39,9 @@ const Navbar = () => {
 
   // const allowedLinks removed in favor of direct checks
 
-  // Check if admin route
-  const location = useLocation();
-  if (location.pathname.startsWith("/admin")) return null;
+  // Check if admin route - DISABLED DEBUG
+  // const location = useLocation();
+  // if (location.pathname.startsWith("/admin")) return null;
 
   return (
     <nav style={styles.nav}>
