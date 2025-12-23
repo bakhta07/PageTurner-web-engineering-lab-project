@@ -3,6 +3,7 @@ import toast from "react-hot-toast";
 import { useCart } from "../context/CartContext";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { API_URL } from "../config";
 
 const Catalog = () => {
   const { addToCart } = useCart();
