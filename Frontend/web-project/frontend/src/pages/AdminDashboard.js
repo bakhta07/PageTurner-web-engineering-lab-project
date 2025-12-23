@@ -3,6 +3,7 @@ import { useAuth } from "../context/AuthContext";
 import { FaBook, FaBox, FaEnvelope, FaPlus, FaCheck, FaTimes, FaSignOutAlt, FaBars, FaSearch, FaFilter, FaEdit, FaTrash } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import API_BASE_URL, { API_URL } from "../config";
 
 const AdminDashboard = () => {
   const { user, logout } = useAuth();
@@ -49,14 +50,14 @@ const AdminDashboard = () => {
   // -- API Calls --
   const fetchCategories = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/categories");
+      const res = await fetch(`${API_URL}/categories`);
       const data = await res.json();
       setCategories(data);
     } catch (err) { console.error(err); }
   };
   const fetchBooks = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/books?limit=100");
+      const res = await fetch(`${API_URL}/books?limit=100`);
       const data = await res.json();
       setBooks(data.books || []);
     } catch (err) { console.error(err); }
@@ -64,7 +65,7 @@ const AdminDashboard = () => {
   const fetchOrders = async () => {
     if (!user) return;
     try {
-      const res = await fetch("http://localhost:5000/api/orders", {
+      const res = await fetch(`${API_URL}/orders`, {
         headers: { Authorization: `Bearer ${user.token}` }
       });
       if (res.ok) setOrders(await res.json());
@@ -73,7 +74,7 @@ const AdminDashboard = () => {
   const fetchRequests = async () => {
     if (!user) return;
     try {
-      const res = await fetch("http://localhost:5000/api/requests", {
+      const res = await fetch(`${API_URL}/requests`, {
         headers: { Authorization: `Bearer ${user.token}` }
       });
       if (res.ok) setRequests(await res.json());
@@ -94,7 +95,7 @@ const AdminDashboard = () => {
   const createCategory = async () => {
     if (!newCatName) return;
     try {
-      const res = await fetch("http://localhost:5000/api/categories", {
+      const res = await fetch(`${API_URL}/categories`, {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${user.token}` },
         body: JSON.stringify({ name: newCatName, description: "Custom Category" })
@@ -138,8 +139,8 @@ const AdminDashboard = () => {
     if (!user) return;
 
     const url = editingId
-      ? `http://localhost:5000/api/books/${editingId}`
-      : "http://localhost:5000/api/books";
+      ? `${API_URL}/books/${editingId}`
+      : `${API_URL}/books`;
 
     const method = editingId ? "PUT" : "POST";
 
@@ -168,7 +169,7 @@ const AdminDashboard = () => {
             onClick={async () => {
               toast.dismiss(t.id);
               try {
-                const res = await fetch(`http://localhost:5000/api/books/${id}`, {
+                const res = await fetch(`${API_URL}/books/${id}`, {
                   method: "DELETE",
                   headers: { Authorization: `Bearer ${user.token}` }
                 });
@@ -180,7 +181,7 @@ const AdminDashboard = () => {
                         onClick={async () => {
                           toast.dismiss(u.id);
                           try {
-                            await fetch(`http://localhost:5000/api/books/${id}/restore`, {
+                            await fetch(`${API_URL}/books/${id}/restore`, {
                               method: "PUT",
                               headers: { Authorization: `Bearer ${user.token}` }
                             });
@@ -218,7 +219,7 @@ const AdminDashboard = () => {
   const toggleOrderStatus = async (id, currentStatus) => {
     const newStatus = currentStatus === "Pending" ? "Completed" : "Pending";
     try {
-      await fetch(`http://localhost:5000/api/orders/${id}/status`, {
+      await fetch(`${API_URL}/orders/${id}/status`, {
         method: "PUT",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${user.token}` },
         body: JSON.stringify({ status: newStatus })
@@ -401,7 +402,7 @@ const AdminDashboard = () => {
                     onChange={async (e) => {
                       const term = e.target.value;
                       const query = term ? `?keyword=${term}` : "?limit=100";
-                      const res = await fetch(`http://localhost:5000/api/books${query}`);
+                      const res = await fetch(`${API_URL}/books${query}`);
                       const data = await res.json();
                       setBooks(data.books || []);
                     }}
@@ -539,10 +540,10 @@ const AdminDashboard = () => {
                         const formData = new FormData();
                         formData.append("image", file);
                         try {
-                          const res = await fetch("http://localhost:5000/api/upload", { method: "POST", body: formData });
+                          const res = await fetch(`${API_URL}/upload`, { method: "POST", body: formData });
                           const data = await res.json();
                           if (res.ok) {
-                            setBookForm({ ...bookForm, imageURL: "http://localhost:5000" + data.filePath });
+                            setBookForm({ ...bookForm, imageURL: API_BASE_URL + data.filePath });
                             toast.success("Image Uploaded!");
                           } else {
                             toast.error(data.message || "Upload Failed");
@@ -563,10 +564,10 @@ const AdminDashboard = () => {
                           const formData = new FormData();
                           formData.append("image", file);
                           try {
-                            const res = await fetch("http://localhost:5000/api/upload", { method: "POST", body: formData });
+                            const res = await fetch(`${API_URL}/upload`, { method: "POST", body: formData });
                             const data = await res.json();
                             if (res.ok) {
-                              setBookForm({ ...bookForm, imageURL: "http://localhost:5000" + data.filePath });
+                              setBookForm({ ...bookForm, imageURL: API_BASE_URL + data.filePath });
                               toast.success("Image Uploaded!");
                             } else { toast.error("Upload Failed"); }
                           } catch (err) { toast.error("Upload Error"); }
