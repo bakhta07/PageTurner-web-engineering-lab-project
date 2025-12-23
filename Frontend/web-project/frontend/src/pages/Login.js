@@ -21,18 +21,22 @@ const Login = () => {
     if (result.success) {
       toast.success("Welcome back!");
 
-      // Let's just hard redirect to home or catalog for now, or check local storage
-      const user = JSON.parse(localStorage.getItem("user"));
-      if (user?.role === "admin") {
-        // Deny Admin Access on Public Portal (Security by Obscurity)
-        logout();
-        localStorage.removeItem("user");
-        localStorage.removeItem("token");
-        // Generic error so nobody knows an admin portal exists
-        toast.error("Invalid email or password");
-      } else {
-        navigate("/catalog");
+      // Security Check: Deny Admin Access on Public Portal
+      // We read from localStorage because the 'user' state might not define 'role' instantly in this closure
+      const userData = JSON.parse(localStorage.getItem("user"));
+
+      if (userData && userData.role === "admin") {
+        // Immediately revoke session
+        await logout(); // Ensure logout completes
+        localStorage.removeItem("user"); // Double clean
+
+        toast.error("Admins must use the secure Admin Portal.");
+        // Optional: redirect them there or just stay here
+        return; // Stop execution
       }
+
+      // Normal user (customer)
+      navigate("/catalog");
     } else {
       toast.error(result.message);
     }
