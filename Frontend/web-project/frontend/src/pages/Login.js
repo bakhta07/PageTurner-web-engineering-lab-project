@@ -1,6 +1,7 @@
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { AUTH_URL } from "../config";
 
 import { Link } from "react-router-dom"; // Add Link import
 
@@ -156,8 +157,11 @@ const Login = () => {
           </button>
         </form>
 
+        import {AUTH_URL} from "../config";
+
+        // ... inside Login component ...
         <div style={{ margin: "20px 0", borderTop: "1px solid #ccc", paddingTop: "20px" }}>
-          <a href="http://localhost:5000/api/auth/google" style={styles.googleBtn}>
+          <a href={`${AUTH_URL}/google`} style={styles.googleBtn}>
             Sign in with Google
           </a>
         </div>

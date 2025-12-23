@@ -165,7 +165,7 @@ const Catalog = () => {
       setLoading(true);
       try {
         const query = searchTerm ? `?keyword=${searchTerm}` : "?limit=100";
-        const res = await fetch(`http://localhost:5000/api/books${query}`);
+        const res = await fetch(`${API_URL}/api/books${query}`);
         const data = await res.json();
         setBooks(data.books || []);
       } catch (err) { console.error(err); }

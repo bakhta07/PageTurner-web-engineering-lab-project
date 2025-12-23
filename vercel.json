@@ -1,0 +1,26 @@
+{
+    "version": 2,
+    "builds": [
+        {
+            "src": "Backend/PageTurner-Backend/server.js",
+            "use": "@vercel/node"
+        },
+        {
+            "src": "Frontend/web-project/frontend/package.json",
+            "use": "@vercel/static-build",
+            "config": {
+                "distDir": "build"
+            }
+        }
+    ],
+    "routes": [
+        {
+            "src": "/api/(.*)",
+            "dest": "/Backend/PageTurner-Backend/server.js"
+        },
+        {
+            "src": "/(.*)",
+            "dest": "/Frontend/web-project/frontend/$1"
+        }
+    ]
+}
