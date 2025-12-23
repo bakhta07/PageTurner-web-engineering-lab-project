@@ -22,7 +22,7 @@
             "handle": "filesystem"
         },
         {
-            "src": "/(.*)",
+            "src": "/((?!api|static|.*\\..*).*)",
             "dest": "/Frontend/web-project/frontend/index.html"
         }
     ]
