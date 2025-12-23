@@ -19,6 +19,26 @@
             "dest": "/Backend/PageTurner-Backend/server.js"
         },
         {
+            "src": "/static/(.*)",
+            "dest": "/Frontend/web-project/frontend/static/$1"
+        },
+        {
+            "src": "/manifest.json",
+            "dest": "/Frontend/web-project/frontend/manifest.json"
+        },
+        {
+            "src": "/favicon.ico",
+            "dest": "/Frontend/web-project/frontend/favicon.ico"
+        },
+        {
+            "src": "/logo192.png",
+            "dest": "/Frontend/web-project/frontend/logo192.png"
+        },
+        {
+            "src": "/logo512.png",
+            "dest": "/Frontend/web-project/frontend/logo512.png"
+        },
+        {
             "handle": "filesystem"
         },
         {
