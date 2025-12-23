@@ -1,6 +1,4 @@
-// src/context/OrderContext.js
-import { createContext, useContext, useState, useEffect } from "react";
-import toast from "react-hot-toast";
+import { createContext, useContext, useState, useEffect, useCallback } from "react";
 import { useAuth } from "./AuthContext";
 import { API_URL } from "../config";
 
@@ -9,6 +7,27 @@ const OrderContext = createContext();
 export const OrderProvider = ({ children }) => {
   const { user } = useAuth();
   const [orders, setOrders] = useState([]);
+
+  const fetchOrders = useCallback(async () => {
+    if (!user) {
+      setOrders([]);
+      return;
+    }
+    try {
+      const res = await fetch(`${API_URL}/orders`, {
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+        },
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        setOrders(data);
+      }
+    } catch (error) {
+      console.error("Error fetching orders:", error);
+    }
+  }, [user]);
 
   const placeOrder = async (cartItems, total) => {
     if (!user) return { success: false, message: "Please login to checkout" };
@@ -27,46 +46,26 @@ export const OrderProvider = ({ children }) => {
       });
       const data = await res.json();
       if (res.ok) {
-        setOrders([...orders, data]);
+        setOrders((prev) => [...prev, data]);
         return { success: true };
       } else {
-        try {
-          const user = JSON.parse(localStorage.getItem("user"));
-          const token = user?.token;
+        return { success: false, message: data.message || "Order failed" };
+      }
+    } catch (error) {
+      console.error(error);
+      return { success: false, message: "Network error" };
+    }
+  };
 
-          if (!token) return;
+  useEffect(() => {
+    fetchOrders();
+  }, [fetchOrders]);
 
-          const res = await fetch("http://localhost:5000/api/orders/my", {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
+  return (
+    <OrderContext.Provider value={{ orders, placeOrder, fetchOrders }}>
+      {children}
+    </OrderContext.Provider>
+  );
+};
 
-          if (res.ok) {
-            const data = await res.json();
-            setOrders(data);
-          }
-        } catch (error) {
-          console.error("Error fetching orders:", error);
-        }
-      };
-
-      const { user } = useAuth();
-
-      // Fetch when user changes
-      useEffect(() => {
-        if (user) {
-          fetchOrders();
-        } else {
-          setOrders([]);
-        }
-      }, [user]);
-
-      return (
-        <OrderContext.Provider value={{ orders, placeOrder, fetchOrders }}>
-          {children}
-        </OrderContext.Provider>
-      );
-    };
-
-    export const useOrders = () => useContext(OrderContext);
+export const useOrders = () => useContext(OrderContext);

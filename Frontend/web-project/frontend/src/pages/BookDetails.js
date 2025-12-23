@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { useBookContext } from "../context/BookContext"; // We might need to export useBookContext or just fetch directly
+
 import { useCart } from "../context/CartContext"; // For Add to Cart
 import toast from "react-hot-toast";
 import { FaStar, FaShoppingCart, FaArrowLeft } from "react-icons/fa";

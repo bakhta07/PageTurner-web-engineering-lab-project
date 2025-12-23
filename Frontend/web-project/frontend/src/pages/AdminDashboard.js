@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
-import { FaBook, FaBox, FaEnvelope, FaPlus, FaCheck, FaTimes, FaSignOutAlt, FaBars, FaSearch, FaFilter, FaEdit, FaTrash } from "react-icons/fa";
-import { Link, useNavigate } from "react-router-dom";
+import { FaBook, FaBox, FaEnvelope, FaPlus, FaTimes, FaSignOutAlt, FaBars, FaSearch, FaEdit, FaTrash } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import API_BASE_URL, { API_URL } from "../config";
 
@@ -128,11 +128,7 @@ const AdminDashboard = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const handleCancelEdit = () => {
-    setEditingId(null);
-    setBookForm({ title: "", author: "", description: "", category: [], price: "", stock: "", rating: "", numReviews: "", imageURL: "" });
-    setActiveTab("books");
-  };
+
 
   const handleAddBook = async (e) => {
     e.preventDefault();
