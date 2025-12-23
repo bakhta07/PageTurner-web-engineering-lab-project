@@ -1,12 +1,10 @@
-import { useEffect, useContext } from "react";
+import { useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
 import toast from "react-hot-toast";
 
 const OAuthSuccess = () => {
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
-    const { setUser } = useAuth(); // We need to expose setUser or use a method to update it
 
     useEffect(() => {
         const token = searchParams.get("token");
