@@ -4,6 +4,20 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>PageTurner</title>
+    <script>
+      window.onerror = function (message, source, lineno, colno, error) {
+        var errorContainer = document.createElement("div");
+        errorContainer.style.cssText = "position: fixed; top: 0; left: 0; width: 100%; background: #ff0000; color: #fff; z-index: 10000; padding: 20px; font-family: monospace; font-weight: bold; word-break: break-all;";
+        errorContainer.innerText = "CRITICAL ERROR: " + message + "\nLine: " + lineno + "\nSource: " + source;
+        document.body.appendChild(errorContainer);
+      };
+      window.onunhandledrejection = function (event) {
+        var errorContainer = document.createElement("div");
+         errorContainer.style.cssText = "position: fixed; top: 100px; left: 0; width: 100%; background: #cc0000; color: #fff; z-index: 10000; padding: 20px; font-family: monospace; font-weight: bold; word-break: break-all;";
+        errorContainer.innerText = "UNHANDLED PROMISE: " + event.reason;
+        document.body.appendChild(errorContainer);
+      };
+    </script>
   </head>
   <body>
     <div id="root"></div>  <!-- THIS IS REQUIRED -->
