@@ -49,6 +49,32 @@ router.post("/", protect, async (req, res) => {
     }
 });
 
+// PUT /api/cart/decrease - Decrease quantity
+router.put("/decrease", protect, async (req, res) => {
+    const { bookId } = req.body;
+    try {
+        let cart = await Cart.findOne({ user: req.user._id });
+        if (!cart) return res.status(404).json({ message: "Cart not found" });
+
+        const itemIndex = cart.items.findIndex(p => p.book.toString() === bookId);
+        if (itemIndex > -1) {
+            let product = cart.items[itemIndex];
+            if (product.quantity > 1) {
+                product.quantity -= 1;
+            } else {
+                cart.items.splice(itemIndex, 1); // Remove if 1 -> 0
+            }
+            await cart.save();
+            const populatedCart = await Cart.findById(cart._id).populate("items.book");
+            res.json(populatedCart.items);
+        } else {
+            res.status(404).json({ message: "Item not found in cart" });
+        }
+    } catch (error) {
+        res.status(500).json({ message: "Error decreasing quantity" });
+    }
+});
+
 // DELETE /api/cart/:bookId - Remove item
 router.delete("/:bookId", protect, async (req, res) => {
     try {

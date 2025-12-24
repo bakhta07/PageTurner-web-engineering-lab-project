@@ -4,10 +4,10 @@ import { useNavigate, Link } from "react-router-dom";
 import { FaTrash, FaArrowLeft, FaShoppingBag } from "react-icons/fa";
 
 const Cart = () => {
-  const { cart, removeFromCart, clearCart } = useCart();
+  const { cart, removeFromCart, clearCart, decreaseQuantity, addToCart } = useCart();
   const navigate = useNavigate();
 
-  const total = cart.reduce((acc, item) => acc + item.price, 0);
+  const total = cart.reduce((acc, item) => acc + (item.price * (item.quantity || 1)), 0);
 
   const styles = {
     container: {
@@ -169,7 +169,6 @@ const Cart = () => {
     <div style={styles.container}>
       <div style={styles.wrapper}>
 
-        {/* Left Column: Cart Items */}
         <div style={styles.leftCol}>
           <div style={styles.header}>
             <FaShoppingBag size={30} />
@@ -198,13 +197,51 @@ const Cart = () => {
                     <div style={styles.itemAuthor}>{item.author || item.book?.author}</div>
                     <div style={styles.itemPrice}>${(item.price || item.book?.price || 0).toFixed(2)}</div>
                   </div>
-                  <button
-                    style={styles.removeBtn}
-                    onClick={() => removeFromCart(idx)}
-                    title="Remove Item"
-                  >
-                    <FaTrash /> Remove
-                  </button>
+
+                  {/* Restaurant Style Quantity Controls */}
+                  <div style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "15px",
+                    backgroundColor: "#fff",
+                    padding: "5px 15px",
+                    borderRadius: "20px",
+                    border: "1px solid #ddd"
+                  }}>
+                    {/* Minus or Trash Button */}
+                    <button
+                      onClick={() => decreaseQuantity(item)}
+                      style={{
+                        background: "none",
+                        border: "none",
+                        color: (item.quantity || 1) === 1 ? "#D32F2F" : "#5D4037",
+                        cursor: "pointer",
+                        fontSize: "1.2rem",
+                        display: "flex",
+                        alignItems: "center"
+                      }}
+                    >
+                      {(item.quantity || 1) === 1 ? <FaTrash size={16} /> : "-"}
+                    </button>
+
+                    <span style={{ fontWeight: "bold", fontSize: "1.1rem", minWidth: "20px", textAlign: "center" }}>
+                      {item.quantity || 1}
+                    </span>
+
+                    <button
+                      onClick={() => addToCart(item)}
+                      style={{
+                        background: "none",
+                        border: "none",
+                        color: "#2E7D32",
+                        cursor: "pointer",
+                        fontSize: "1.2rem",
+                        fontWeight: "bold"
+                      }}
+                    >
+                      +
+                    </button>
+                  </div>
                 </div>
               ))}
             </>

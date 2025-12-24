@@ -23,23 +23,27 @@ export const CartProvider = ({ children }) => {
     const syncCart = async () => {
       if (user && user.token) {
         try {
-          // 1. If we have local items, add them to DB first (Merge Strategy)
+          // 1. If we have local items, add them to DB first
+          // Note: Backend increments by 1 per call. We must loop if quantity > 1.
           if (cart.length > 0) {
             for (const item of cart) {
-              await fetch(`${API_URL}/cart`, {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                  Authorization: `Bearer ${user.token}`
-                },
-                body: JSON.stringify({
-                  bookId: item._id || item.bookId,
-                  title: item.title,
-                  price: item.price,
-                  author: item.author,
-                  imageURL: item.imageURL
-                })
-              });
+              const qty = item.quantity || 1;
+              for (let i = 0; i < qty; i++) {
+                await fetch(`${API_URL}/cart`, {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${user.token}`
+                  },
+                  body: JSON.stringify({
+                    bookId: item._id || item.bookId,
+                    title: item.title,
+                    price: item.price,
+                    author: item.author,
+                    imageURL: item.imageURL
+                  })
+                });
+              }
             }
             localStorage.removeItem("cart");
           }
@@ -50,30 +54,27 @@ export const CartProvider = ({ children }) => {
           });
           if (res.ok) {
             const serverCart = await res.json();
-            const flatCart = [];
-            serverCart.forEach(item => {
-              // Handle populated book object
+            // Map server simplified items to our structure
+            // Server returns: { book: {..}, quantity: N, ... }
+            const processedCart = serverCart.map(item => {
               const bookData = item.book || {};
-              for (let i = 0; i < item.quantity; i++) {
-                flatCart.push({
-                  ...item,
-                  _id: bookData._id, // Restore Book ID as main ID
-                  title: bookData.title || item.title,
-                  author: bookData.author || item.author,
-                  price: bookData.price || item.price,
-                  imageURL: bookData.imageURL || item.imageURL,
-                  book: bookData // Keep full ref just in case
-                });
-              }
+              return {
+                ...item,
+                _id: bookData._id || item.book, // Ensure we use Book ID
+                title: bookData.title || item.title,
+                author: bookData.author || item.author,
+                price: bookData.price || item.price,
+                imageURL: bookData.imageURL || item.imageURL,
+                quantity: item.quantity,
+                book: bookData
+              };
             });
-            setCart(flatCart);
+            setCart(processedCart);
           }
         } catch (err) { console.error(err); }
       }
     };
     syncCart();
-    // We only want this to run when 'user' changes (logs in). 
-    // If we included 'cart' in deps, it would loop forever.
     // eslint-disable-next-line
   }, [user]);
 
@@ -86,7 +87,19 @@ export const CartProvider = ({ children }) => {
 
   const addToCart = async (item) => {
     // Optimistic UI update
-    setCart((prev) => [...prev, item]);
+    setCart((prev) => {
+      const existingIdx = prev.findIndex(p => p._id === item._id);
+      if (existingIdx > -1) {
+        const newCart = [...prev];
+        newCart[existingIdx] = {
+          ...newCart[existingIdx],
+          quantity: (newCart[existingIdx].quantity || 1) + 1
+        };
+        return newCart;
+      } else {
+        return [...prev, { ...item, quantity: 1 }];
+      }
+    });
 
     if (user && user.token) {
       try {
@@ -127,6 +140,37 @@ export const CartProvider = ({ children }) => {
     }
   };
 
+  const decreaseQuantity = async (item) => {
+    // Optimistic Update
+    setCart((prev) => {
+      const existingIdx = prev.findIndex(p => p._id === item._id);
+      if (existingIdx > -1) {
+        const newCart = [...prev];
+        if (newCart[existingIdx].quantity > 1) {
+          newCart[existingIdx] = { ...newCart[existingIdx], quantity: newCart[existingIdx].quantity - 1 };
+          return newCart;
+        } else {
+          // Remove item
+          return newCart.filter((_, i) => i !== existingIdx);
+        }
+      }
+      return prev;
+    });
+
+    if (user && user.token) {
+      try {
+        await fetch(`${API_URL}/cart/decrease`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${user.token}`
+          },
+          body: JSON.stringify({ bookId: item._id })
+        });
+      } catch (err) { console.error(err); }
+    }
+  };
+
   const clearCart = async () => {
     setCart([]);
     if (user && user.token) {
@@ -140,7 +184,7 @@ export const CartProvider = ({ children }) => {
   };
 
   return (
-    <CartContext.Provider value={{ cart, addToCart, removeFromCart, clearCart }}>
+    <CartContext.Provider value={{ cart, addToCart, decreaseQuantity, removeFromCart, clearCart }}>
       {children}
     </CartContext.Provider>
   );
