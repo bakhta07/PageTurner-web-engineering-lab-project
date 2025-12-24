@@ -2,7 +2,7 @@ import { AuthProvider } from "./context/AuthContext";
 import { OrderProvider } from "./context/OrderContext";
 import { BooksProvider } from "./context/BookContext";
 import { CartProvider } from "./context/CartContext";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import Catalog from "./pages/Catalog";
@@ -70,14 +70,11 @@ function App() {
                     />
                     <Route path="/order-success" element={<OrderSuccess />} />
 
-                    <Route
-                      path="/admin"
-                      element={
-                        <AdminRoute>
-                          <AdminDashboard />
-                        </AdminRoute>
-                      }
-                    />
+                    <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+
+                    {/* Redirects and 404 */}
+                    <Route path="/admin-panel" element={<Navigate to="/admin" replace />} />
+                    <Route path="*" element={<div style={{ textAlign: "center", padding: "50px", fontSize: "1.5rem" }}>404 - Page Not Found</div>} />
                   </Routes>
                 </div>
                 <Footer />
