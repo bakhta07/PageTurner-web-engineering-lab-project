@@ -6,8 +6,21 @@ import toast from "react-hot-toast";
 import API_BASE_URL, { API_URL } from "../config";
 
 const AdminDashboard = () => {
-  const { user, logout } = useAuth();
+  // Use Separate Admin Session
+  const [user, setUser] = useState(() => {
+    return JSON.parse(localStorage.getItem("adminUser")) || null;
+  });
+
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!user) navigate("/admin-panel");
+  }, [user, navigate]);
+
+  const logout = () => {
+    localStorage.removeItem("adminUser");
+    navigate("/admin-panel");
+  };
   const [activeTab, setActiveTab] = useState("books");
   const [books, setBooks] = useState([]);
   const [orders, setOrders] = useState([]);

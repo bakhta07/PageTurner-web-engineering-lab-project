@@ -105,9 +105,7 @@ const Navbar = () => {
 
         {user ? (
           <>
-            {user.role === "admin" && (
-              <Link to="/admin" style={{ ...styles.link, color: "#F1C40F" }}>Admin Dashboard</Link>
-            )}
+
             <span style={{ color: "#bdc3c7" }}>|</span>
             <div style={styles.link}><FaUser /> {user.name}</div>
             <button

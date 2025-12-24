@@ -22,35 +22,36 @@ const AdminLogin = () => {
                 role: "admin",
                 token: "demo_token_bypass"
             };
-            localStorage.setItem("user", JSON.stringify(mockUser));
+            localStorage.setItem("adminUser", JSON.stringify(mockUser));
             toast.success("Demo Admin Access Granted");
-            // Force redirection to admin dashboard to pick up new localStorage state
-            window.location.href = "/admin";
+            navigate("/admin");
             return;
         }
         // ---------------------------
 
-        // Custom login logic
-        const result = await login(email, password);
+        // Custom admin login logic (Separate from Customer AuthContext)
+        try {
+            const res = await fetch(`${API_URL}/auth/login`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email, password }),
+            });
+            const data = await res.json();
 
-        if (result.success) {
-            // Check if user is actually admin
-            // We can read this from the decoded token or localStorage since auth context sets it
-            const user = JSON.parse(localStorage.getItem("user"));
-            if (user?.role === "admin") {
-                toast.success("Welcome, Administrator.");
-                navigate("/admin");
+            if (res.ok) {
+                // Check if user is actually admin
+                if (data.role === "admin") {
+                    localStorage.setItem("adminUser", JSON.stringify(data));
+                    toast.success("Welcome, Administrator.");
+                    navigate("/admin"); // Dashboard
+                } else {
+                    toast.error("Access Denied: You are not an administrator.");
+                }
             } else {
-                toast.error("Access Denied: You are not an administrator.");
-                // Immediately logout if not admin
-                localStorage.removeItem("user");
-                localStorage.removeItem("token");
-                // Force reload or auth context clear could be needed, but removal is safe enough for "denying entry"
-                // Actually calling logout() from context is cleaner if available, but for now this works to bounce them.
-                navigate("/login");
+                toast.error(data.message || "Authentication Failed");
             }
-        } else {
-            toast.error(result.message || "Authentication Failed");
+        } catch (err) {
+            toast.error("Login Error");
         }
     };
 
