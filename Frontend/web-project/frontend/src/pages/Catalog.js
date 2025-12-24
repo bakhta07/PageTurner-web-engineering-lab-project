@@ -161,6 +161,7 @@ const Catalog = () => {
   };
 
   /* PAGINATION STATE */
+  const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const LIMIT = 12;
