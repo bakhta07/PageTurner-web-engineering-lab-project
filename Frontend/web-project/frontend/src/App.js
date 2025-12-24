@@ -51,6 +51,7 @@ function App() {
                     </ProtectedRoute>
                   }
                 />
+                <Route path="/order-success" element={<OrderSuccess />} />
 
                 <Route
                   path="/admin"

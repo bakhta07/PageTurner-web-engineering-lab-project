@@ -1,10 +1,9 @@
+```javascript
 import React from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { FaCheckCircle, FaShoppingBag, FaArrowRight } from "react-icons/fa";
 
 const OrderSuccess = () => {
-    const navigate = useNavigate();
-
     const styles = {
         container: {
             minHeight: "80vh",
