@@ -2,7 +2,7 @@ import { AuthProvider } from "./context/AuthContext";
 import { OrderProvider } from "./context/OrderContext";
 import { BooksProvider } from "./context/BookContext";
 import { CartProvider } from "./context/CartContext";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import Catalog from "./pages/Catalog";
