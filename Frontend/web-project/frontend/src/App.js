@@ -2,7 +2,7 @@ import { AuthProvider } from "./context/AuthContext";
 import { OrderProvider } from "./context/OrderContext";
 import { BooksProvider } from "./context/BookContext";
 import { CartProvider } from "./context/CartContext";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import Catalog from "./pages/Catalog";
@@ -18,11 +18,30 @@ import AdminDashboard from "./pages/AdminDashboard";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import AdminRoute from "./routes/AdminRoute";
 import Checkout from "./pages/Checkout";
-import OrderSuccess from "./pages/OrderSuccess"; // New Page
+import OrderSuccess from "./pages/OrderSuccess";
 
 import { Toaster } from "react-hot-toast";
 
 import Footer from "./components/Footer";
+
+const MainLayout = ({ children }) => {
+  const location = useLocation();
+  const isAdminRoute = location.pathname.startsWith("/admin");
+  const contentStyles = {
+    flex: 1, // Pushes footer down
+    display: "flex",
+    flexDirection: "column"
+  };
+
+  return (
+    <>
+      {!isAdminRoute && <Navbar />}
+      <div style={contentStyles}>
+        {children}
+      </div>
+    </>
+  );
+};
 
 function App() {
   const appStyles = {
@@ -30,12 +49,6 @@ function App() {
     flexDirection: "column",
     minHeight: "100vh",
     backgroundColor: "#F5F5DC" // Global background to avoid white gaps
-  };
-
-  const contentStyles = {
-    flex: 1, // Pushes footer down
-    display: "flex",
-    flexDirection: "column"
   };
 
   return (
@@ -46,8 +59,7 @@ function App() {
           <BooksProvider>
             <OrderProvider>
               <div style={appStyles}>
-                <Navbar />
-                <div style={contentStyles}>
+                <MainLayout>
                   <Routes>
                     <Route path="/" element={<Home />} />
                     <Route path="/login" element={<Login />} />
@@ -76,7 +88,7 @@ function App() {
                     <Route path="/admin-panel" element={<AdminLogin />} />
                     <Route path="*" element={<div style={{ textAlign: "center", padding: "50px", fontSize: "1.5rem" }}>404 - Page Not Found</div>} />
                   </Routes>
-                </div>
+                </MainLayout>
                 <Footer />
               </div>
             </OrderProvider>

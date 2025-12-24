@@ -81,8 +81,12 @@ const AdminDashboard = () => {
       const res = await fetch(`${API_URL}/books${query}`);
       const data = await res.json();
       setBooks(data.books || []);
+      setBooks(data.books || []);
       setTotalPages(data.pages || 1);
-    } catch (err) { console.error(err); }
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to load books");
+    }
   };
 
   useEffect(() => {
@@ -178,13 +182,19 @@ const AdminDashboard = () => {
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${user.token}` },
         body: JSON.stringify(bookForm)
       });
+
       if (res.ok) {
-        toast.success(editingId ? "Book Updated Successfully" : "Book Added Successfully");
+        const data = await res.json();
+        toast.success(editingId ? "Book Updated Successfully" : `Book Added! ID: ${data._id ? data._id.slice(-6) : 'Unknown'}`);
         setBookForm({ title: "", author: "", description: "", category: [], price: "", stock: "", rating: "", numReviews: "", imageURL: "" });
         setEditingId(null);
+        setPage(1);
         fetchBooks();
         setActiveTab("books");
-      } else { toast.error("Operation Failed"); }
+      } else {
+        const errData = await res.json();
+        toast.error(errData.message || "Operation Failed");
+      }
     } catch (err) { console.error(err); }
   };
 
@@ -669,8 +679,24 @@ const AdminDashboard = () => {
                           <span style={styles.badge(order.status)}>{order.status}</span>
                         </td>
                         <td style={styles.td}>
-                          <button onClick={() => toggleOrderStatus(order._id, order.status)} style={{ cursor: "pointer", border: "none", background: "none", color: colors.primary, fontWeight: "600", fontSize: "0.875rem" }}>
-                            {order.status === "Pending" ? "Mark Completed" : "Mark Pending"}
+                          <button
+                            onClick={async () => {
+                              const promise = toggleOrderStatus(order._id, order.status);
+                              await toast.promise(promise, {
+                                loading: 'Updating status...',
+                                success: 'Status Updated',
+                                error: 'Failed to update'
+                              });
+                            }}
+                            style={{
+                              cursor: "pointer", border: "none", color: "white", fontWeight: "600", fontSize: "0.80rem",
+                              backgroundColor: order.status === "Pending" ? "#10B981" : "#F59E0B", // Green or Amber
+                              padding: "6px 12px", borderRadius: "6px", transition: "0.2s"
+                            }}
+                            onMouseEnter={(e) => e.currentTarget.style.opacity = "0.9"}
+                            onMouseLeave={(e) => e.currentTarget.style.opacity = "1"}
+                          >
+                            {order.status === "Pending" ? "Mark Shipped" : "Mark Pending"}
                           </button>
                         </td>
                       </tr>

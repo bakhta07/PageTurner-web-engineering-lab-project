@@ -11,22 +11,7 @@ const AdminLogin = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // --- VERCEL DEMO BYPASS ---
-        // Validate hardcoded admin credentials to allow access without DB seeding
-        if (email === "admin@pageturner.com" && password === "admin123") {
-            const mockUser = {
-                _id: "demo_admin_123",
-                name: "Demo Admin",
-                email: "admin@pageturner.com",
-                role: "admin",
-                token: "demo_token_bypass"
-            };
-            localStorage.setItem("adminUser", JSON.stringify(mockUser));
-            toast.success("Demo Admin Access Granted");
-            navigate("/admin");
-            return;
-        }
-        // ---------------------------
+
 
         // Custom admin login logic (Separate from Customer AuthContext)
         try {
