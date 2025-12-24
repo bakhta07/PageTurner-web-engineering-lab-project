@@ -4,7 +4,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { FaTrash, FaArrowLeft, FaShoppingBag } from "react-icons/fa";
 
 const Cart = () => {
-  const { cart, removeFromCart, clearCart, decreaseQuantity, addToCart } = useCart();
+  const { cart, clearCart, decreaseQuantity, addToCart } = useCart();
   const navigate = useNavigate();
 
   const total = cart.reduce((acc, item) => acc + (item.price * (item.quantity || 1)), 0);
