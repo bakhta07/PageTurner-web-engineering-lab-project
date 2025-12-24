@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { FaBook, FaBox, FaEnvelope, FaPlus, FaTimes, FaSignOutAlt, FaBars, FaSearch, FaEdit, FaTrash } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import API_BASE_URL, { API_URL } from "../config";
+import { API_URL } from "../config";
 
 const AdminDashboard = () => {
   // Use Separate Admin Session
