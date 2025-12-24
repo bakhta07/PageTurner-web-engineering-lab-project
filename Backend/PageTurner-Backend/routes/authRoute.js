@@ -46,9 +46,14 @@ router.post("/register", registerValidation, async (req, res, next) => {
   }
 });
 
-/* ONE-TIME SETUP: CREATE REAL ADMIN */
+/* ONE-TIME SETUP: CREATE REAL ADMIN (SECURED) */
 router.get("/setup-admin", async (req, res) => {
   try {
+    // 🔒 SECURITY CHECK
+    if (req.query.key !== "secure_setup_key_123") {
+      return res.status(403).json({ message: "Forbidden: Invalid Setup Key" });
+    }
+
     const adminEmail = "admin@pageturner.com";
     const userExists = await User.findOne({ email: adminEmail });
 
