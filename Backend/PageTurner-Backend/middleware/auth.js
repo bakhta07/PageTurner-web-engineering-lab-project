@@ -10,6 +10,18 @@ const protect = async (req, res, next) => {
 
   try {
     const token = authHeader.split(" ")[1];
+
+    // --- DEMO BYPASS (Lab Project Only) ---
+    if (token === "demo_token_bypass") {
+      req.user = {
+        _id: "demo_admin_123",
+        name: "Demo Admin",
+        email: "admin@pageturner.com",
+        role: "admin"
+      };
+      return next();
+    }
+
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
     const user = await User.findById(decoded.id).select("-password");
