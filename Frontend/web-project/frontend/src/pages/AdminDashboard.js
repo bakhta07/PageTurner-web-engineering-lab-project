@@ -89,15 +89,6 @@ const AdminDashboard = () => {
     fetchBooks();
   }, [page]); // Re-fetch on page change
 
-  // Reset page when switching tabs or needs refresh
-  const handleTabChange = (id) => {
-    setActiveTab(id);
-    if (id === "books") {
-      setPage(1);
-      fetchBooks();
-    }
-  };
-
 
   // ... inside render ...
 
@@ -438,6 +429,7 @@ const AdminDashboard = () => {
       onClick={() => {
         if (onClick) onClick();
         setActiveTab(id);
+        if (id === "books") setPage(1);
         if (window.innerWidth < 768) setIsSidebarOpen(false);
       }}
       style={{
