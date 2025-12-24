@@ -72,8 +72,8 @@ function App() {
 
                     <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
 
-                    {/* Redirects and 404 */}
-                    <Route path="/admin-panel" element={<Navigate to="/admin" replace />} />
+                    {/* Secret Admin Login */}
+                    <Route path="/admin-panel" element={<AdminLogin />} />
                     <Route path="*" element={<div style={{ textAlign: "center", padding: "50px", fontSize: "1.5rem" }}>404 - Page Not Found</div>} />
                   </Routes>
                 </div>
