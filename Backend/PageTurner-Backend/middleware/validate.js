@@ -20,7 +20,7 @@ const bookValidation = [
     check("title", "Title is required").not().isEmpty(),
     check("author", "Author is required").not().isEmpty(),
     check("price", "Price must be a number").isNumeric(),
-    check("stock_quantity", "Stock must be a number").isNumeric(),
+    check("stock", "Stock must be a number").isNumeric(),
     handleValidation,
 ];
 
