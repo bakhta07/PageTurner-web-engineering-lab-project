@@ -1,4 +1,3 @@
-```javascript
 import React from "react";
 import { Link } from "react-router-dom";
 import { FaCheckCircle, FaShoppingBag, FaArrowRight } from "react-icons/fa";
@@ -11,7 +10,7 @@ const OrderSuccess = () => {
             flexDirection: "column",
             justifyContent: "center",
             alignItems: "center",
-            backgroundColor: "#FFF8E7", // Paper/Cream
+            backgroundColor: "#FFF8E7",
             fontFamily: "'Segoe UI', Roboto, sans-serif",
             textAlign: "center",
             padding: "20px",
@@ -25,7 +24,7 @@ const OrderSuccess = () => {
             width: "100%",
         },
         icon: {
-            color: "#27AE60", // Green
+            color: "#27AE60",
             fontSize: "4rem",
             marginBottom: "20px",
         },
@@ -47,7 +46,7 @@ const OrderSuccess = () => {
             gap: "15px",
         },
         primaryBtn: {
-            backgroundColor: "#F1C40F", // Gold
+            backgroundColor: "#F1C40F",
             color: "#2C3E50",
             padding: "15px 20px",
             borderRadius: "10px",
