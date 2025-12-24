@@ -225,7 +225,12 @@ const Catalog = () => {
             }}
           >
             <Link to={`/product/${book._id}`} style={{ textDecoration: "none", color: "inherit", flex: 1 }}>
-              <img src={book.imageURL || "https://via.placeholder.com/150"} alt={book.title} style={styles.image} />
+              <img
+                src={book.imageURL || "https://via.placeholder.com/150"}
+                alt={book.title}
+                style={styles.image}
+                onError={(e) => { e.target.onerror = null; e.target.src = "https://via.placeholder.com/150?text=No+Image"; }}
+              />
               <div style={styles.bookTitle}>{book.title}</div>
             </Link>
             <div style={styles.bookAuthor}>{book.author}</div>
@@ -276,7 +281,12 @@ const Catalog = () => {
         ) : (
           recommendedBooks.map((book, idx) => (
             <div key={idx} style={styles.card}>
-              <img src={book.imageURL || "https://via.placeholder.com/150"} alt={book.title} style={styles.image} />
+              <img
+                src={book.imageURL || "https://via.placeholder.com/150"}
+                alt={book.title}
+                style={styles.image}
+                onError={(e) => { e.target.onerror = null; e.target.src = "https://via.placeholder.com/150?text=No+Image"; }}
+              />
               <div style={styles.bookTitle}>{book.title}</div>
               <div style={styles.bookAuthor}>{book.author}</div>
               <div style={styles.bookGenre}>{book.category?.name || book.genre || "General"}</div>

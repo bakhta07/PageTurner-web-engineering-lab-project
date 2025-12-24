@@ -459,7 +459,12 @@ const AdminDashboard = () => {
                 {books.map(book => (
                   <div key={book._id} style={styles.card}>
                     <div style={{ position: "relative" }}>
-                      <img src={book.imageURL} alt={book.title} style={styles.cardImg} />
+                      <img
+                        src={book.imageURL || "https://via.placeholder.com/150"}
+                        alt={book.title}
+                        style={styles.cardImg}
+                        onError={(e) => { e.target.onerror = null; e.target.src = "https://via.placeholder.com/150?text=No+Image"; }}
+                      />
                       <div style={{ position: "absolute", top: "10px", right: "10px", backgroundColor: "white", padding: "4px 8px", borderRadius: "8px", fontSize: "0.75rem", fontWeight: "700", boxShadow: "0 2px 4px rgba(0,0,0,0.1)" }}>
                         ⭐ {book.rating}
                       </div>
