@@ -78,6 +78,7 @@ router.get("/", async (req, res, next) => {
 
     const count = await Book.countDocuments(query);
     const books = await Book.find(query)
+      .sort({ createdAt: -1 }) // Sort Newest First
       .limit(limit)
       .skip(skip);
 

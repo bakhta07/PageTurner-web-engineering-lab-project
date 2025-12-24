@@ -68,13 +68,122 @@ const AdminDashboard = () => {
       setCategories(data);
     } catch (err) { console.error(err); }
   };
-  const fetchBooks = async () => {
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const LIMIT = 12;
+
+  // -- API Calls --
+  const fetchBooks = async (searchTerm = "") => {
     try {
-      const res = await fetch(`${API_URL}/books?limit=100`);
+      let query = `?page=${page}&limit=${LIMIT}`;
+      if (searchTerm) query += `&keyword=${searchTerm}`;
+
+      const res = await fetch(`${API_URL}/books${query}`);
       const data = await res.json();
       setBooks(data.books || []);
+      setTotalPages(data.pages || 1);
     } catch (err) { console.error(err); }
   };
+
+  useEffect(() => {
+    fetchBooks();
+  }, [page]); // Re-fetch on page change
+
+  // Reset page when switching tabs or needs refresh
+  const handleTabChange = (id) => {
+    setActiveTab(id);
+    if (id === "books") {
+      setPage(1);
+      fetchBooks();
+    }
+  };
+
+
+  // ... inside render ...
+
+  {/* BOOKS TAB */ }
+  {
+    activeTab === "books" && (
+      <div>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px" }}>
+          <h2 style={{ ...styles.sectionTitle, marginBottom: 0 }}>Library Overview</h2>
+          <div style={{ position: "relative" }}>
+            <FaSearch style={{ position: "absolute", left: "12px", top: "50%", transform: "translateY(-50%)", color: "#BDC3C7" }} />
+            <input
+              type="text"
+              placeholder="Search library..."
+              style={{ padding: "10px 10px 10px 36px", borderRadius: "12px", border: "1px solid #BDC3C7", outline: "none", minWidth: "300px" }}
+              onChange={(e) => {
+                const term = e.target.value;
+                setPage(1); // Reset page on search
+                fetchBooks(term);
+              }}
+            />
+          </div>
+        </div>
+        <div style={styles.grid}>
+          {books.map(book => (
+            <div key={book._id} style={styles.card}>
+              <div style={{ position: "relative" }}>
+                <img src={book.imageURL} alt={book.title} style={styles.cardImg} />
+                <div style={{ position: "absolute", top: "10px", right: "10px", backgroundColor: "white", padding: "4px 8px", borderRadius: "8px", fontSize: "0.75rem", fontWeight: "700", boxShadow: "0 2px 4px rgba(0,0,0,0.1)" }}>
+                  ⭐ {book.rating}
+                </div>
+                <button
+                  onClick={(e) => { e.stopPropagation(); handleEditClick(book); }}
+                  style={{ position: "absolute", top: "10px", left: "10px", backgroundColor: colors.primary, color: colors.sidebar, border: "none", padding: "8px", borderRadius: "50%", cursor: "pointer", boxShadow: "0 2px 4px rgba(0,0,0,0.2)", display: "flex", alignItems: "center", justifyContent: "center" }}
+                  title="Edit Book"
+                >
+                  <FaEdit size={14} />
+                </button>
+
+                <button
+                  onClick={(e) => { e.stopPropagation(); handleDeleteBook(book._id); }}
+                  style={{ position: "absolute", top: "50px", left: "10px", backgroundColor: "#EF4444", color: "white", border: "none", padding: "8px", borderRadius: "50%", cursor: "pointer", boxShadow: "0 2px 4px rgba(0,0,0,0.2)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 10 }}
+                  title="Delete Book"
+                >
+                  <FaTrash size={14} />
+                </button>
+              </div>
+              <h4 style={{ margin: "0 0 4px", fontSize: "1.1rem", fontWeight: "700", color: colors.text }}>{book.title}</h4>
+              <p style={{ margin: 0, fontSize: "0.875rem", color: colors.textLight }}>{book.author}</p>
+              <div style={{ marginTop: "auto", paddingTop: "16px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <span style={{ fontSize: "1.25rem", fontWeight: "700", color: colors.primary }}>${book.price}</span>
+                <span style={{ fontSize: "0.875rem", color: book.stock > 0 ? "#166534" : "#EF4444", backgroundColor: book.stock > 0 ? "#DCFCE7" : "#FEE2E2", padding: "4px 10px", borderRadius: "99px", fontWeight: "600" }}>
+                  {book.stock} left
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* PAGINATION CONTROLS FOR ADMIN */}
+        {totalPages > 1 && (
+          <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "20px", marginTop: "40px" }}>
+            <button
+              onClick={() => setPage(p => Math.max(1, p - 1))}
+              disabled={page === 1}
+              style={{
+                padding: "8px 16px", backgroundColor: page === 1 ? "#ccc" : colors.sidebar, color: "white", border: "none", borderRadius: "8px", cursor: page === 1 ? "not-allowed" : "pointer", fontWeight: "bold"
+              }}
+            >
+              Previous
+            </button>
+            <span style={{ fontWeight: "bold", fontSize: "1rem" }}>Page {page} of {totalPages}</span>
+            <button
+              onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+              disabled={page === totalPages}
+              style={{
+                padding: "8px 16px", backgroundColor: page === totalPages ? "#ccc" : colors.sidebar, color: "white", border: "none", borderRadius: "8px", cursor: page === totalPages ? "not-allowed" : "pointer", fontWeight: "bold"
+              }}
+            >
+              Next
+            </button>
+          </div>
+        )}
+      </div>
+    )
+  }
   const fetchOrders = async () => {
     if (!user) return;
     try {

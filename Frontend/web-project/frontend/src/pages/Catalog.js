@@ -160,22 +160,40 @@ const Catalog = () => {
     },
   };
 
-  const [searchTerm, setSearchTerm] = useState("");
+  /* PAGINATION STATE */
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const LIMIT = 12;
 
   useEffect(() => {
     const delayDebounceFn = setTimeout(async () => {
       try {
-        const query = searchTerm ? `?keyword=${searchTerm}` : "?limit=100";
+        let query = `?page=${page}&limit=${LIMIT}`;
+        if (searchTerm) query += `&keyword=${searchTerm}`;
+
         const res = await fetch(`${API_URL}/books${query}`);
         const data = await res.json();
         setBooks(data.books || []);
+        setTotalPages(data.pages || 1);
       } catch (err) { console.error(err); }
     }, 500);
 
     return () => clearTimeout(delayDebounceFn);
+  }, [searchTerm, page]);
+
+  // Reset page when search changes
+  useEffect(() => {
+    setPage(1);
   }, [searchTerm]);
 
-  // ... simple rec ...
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setPage(newPage);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
+
+  // ... (rest logic)
 
   return (
     <div style={styles.container}>
@@ -224,6 +242,31 @@ const Catalog = () => {
         ))}
       </div>
 
+      {/* PAGINATION CONTROLS */}
+      {totalPages > 1 && (
+        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "20px", marginTop: "40px" }}>
+          <button
+            onClick={() => handlePageChange(page - 1)}
+            disabled={page === 1}
+            style={{
+              padding: "10px 20px", backgroundColor: page === 1 ? "#ccc" : "#5D4037", color: "white", border: "none", borderRadius: "8px", cursor: page === 1 ? "not-allowed" : "pointer", fontWeight: "bold"
+            }}
+          >
+            Previous
+          </button>
+          <span style={{ fontWeight: "bold", fontSize: "1.1rem" }}>Page {page} of {totalPages}</span>
+          <button
+            onClick={() => handlePageChange(page + 1)}
+            disabled={page === totalPages}
+            style={{
+              padding: "10px 20px", backgroundColor: page === totalPages ? "#ccc" : "#5D4037", color: "white", border: "none", borderRadius: "8px", cursor: page === totalPages ? "not-allowed" : "pointer", fontWeight: "bold"
+            }}
+          >
+            Next
+          </button>
+        </div>
+      )}
+
       {/* Recommended Section */}
       <h3 style={styles.recommendedTitle}>Recommended Books</h3>
       <div style={styles.grid}>
@@ -235,7 +278,7 @@ const Catalog = () => {
               <img src={book.imageURL || "https://via.placeholder.com/150"} alt={book.title} style={styles.image} />
               <div style={styles.bookTitle}>{book.title}</div>
               <div style={styles.bookAuthor}>{book.author}</div>
-              <div style={styles.bookGenre}>{book.genre}</div>
+              <div style={styles.bookGenre}>{book.category?.name || book.genre || "General"}</div>
               <div>${book.price}</div>
               <button
                 style={styles.addBtn}
