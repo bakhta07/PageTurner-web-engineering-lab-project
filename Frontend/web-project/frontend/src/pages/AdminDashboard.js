@@ -185,7 +185,12 @@ const AdminDashboard = () => {
 
       if (res.ok) {
         const data = await res.json();
-        toast.success(editingId ? "Book Updated Successfully" : `Book Added! ID: ${data._id ? data._id.slice(-6) : 'Unknown'}`);
+        console.log("Add/Edit Response:", data);
+        if (data._id) {
+          toast.success(editingId ? "Book Updated Successfully" : `Book Added! ID: ${data._id.slice(-6)}`);
+        } else {
+          toast.success(`Book Added but ID missing! Raw: ${JSON.stringify(data).substring(0, 100)}`);
+        }
         setBookForm({ title: "", author: "", description: "", category: [], price: "", stock: "", rating: "", numReviews: "", imageURL: "" });
         setEditingId(null);
         setPage(1);
