@@ -46,6 +46,38 @@ router.post("/register", registerValidation, async (req, res, next) => {
   }
 });
 
+/* ONE-TIME SETUP: CREATE REAL ADMIN */
+router.get("/setup-admin", async (req, res) => {
+  try {
+    const adminEmail = "admin@pageturner.com";
+    const userExists = await User.findOne({ email: adminEmail });
+
+    if (userExists) {
+      // If exists, just return success (or could reset password)
+      return res.json({ message: "Admin already exists", email: adminEmail });
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash("admin123", salt);
+
+    const user = await User.create({
+      name: "Admin User",
+      email: adminEmail,
+      password: hashedPassword,
+      role: "admin"
+    });
+
+    res.json({
+      message: "Admin Created Successfully!",
+      email: user.email,
+      role: user.role,
+      token: generateToken(user._id) // Returns a REAL token immediately
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 /* LOGIN */
 router.post("/login", async (req, res) => {
   try {
