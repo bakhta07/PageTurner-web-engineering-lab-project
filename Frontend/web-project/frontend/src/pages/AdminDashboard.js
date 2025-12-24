@@ -7,7 +7,7 @@ import API_BASE_URL, { API_URL } from "../config";
 
 const AdminDashboard = () => {
   // Use Separate Admin Session
-  const [user, setUser] = useState(() => {
+  const [user] = useState(() => {
     return JSON.parse(localStorage.getItem("adminUser")) || null;
   });
 
