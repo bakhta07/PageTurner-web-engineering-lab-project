@@ -166,7 +166,7 @@ const Catalog = () => {
     const delayDebounceFn = setTimeout(async () => {
       try {
         const query = searchTerm ? `?keyword=${searchTerm}` : "?limit=100";
-        const res = await fetch(`${API_URL}/api/books${query}`);
+        const res = await fetch(`${API_URL}/books${query}`);
         const data = await res.json();
         setBooks(data.books || []);
       } catch (err) { console.error(err); }
