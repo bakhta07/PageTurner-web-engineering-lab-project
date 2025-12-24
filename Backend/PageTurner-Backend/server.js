@@ -16,7 +16,8 @@ app.use(helmet());
 app.use(cors());
 
 // 2) Body Parser
-app.use(express.json());
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
 // const mongoSanitize = require("express-mongo-sanitize"); // Removed
 // 3) Data Sanitization
