@@ -29,10 +29,16 @@ export const OrderProvider = ({ children }) => {
     }
   }, [user]);
 
-  const placeOrder = async (cartItems, total) => {
+  const placeOrder = async (cartItems) => {
     if (!user) return { success: false, message: "Please login to checkout" };
 
     try {
+      // Backend expects 'books' array with { book: bookId, quantity: number }
+      const payloadItems = cartItems.map(item => ({
+        book: item.book?._id || item._id, // Handle both populated and unpopulated/mixed structures
+        quantity: item.quantity || 1
+      }));
+
       const res = await fetch(`${API_URL}/orders`, {
         method: "POST",
         headers: {
@@ -40,8 +46,7 @@ export const OrderProvider = ({ children }) => {
           Authorization: `Bearer ${user.token}`
         },
         body: JSON.stringify({
-          orderItems: cartItems,
-          totalPrice: total
+          books: payloadItems
         })
       });
       const data = await res.json();
