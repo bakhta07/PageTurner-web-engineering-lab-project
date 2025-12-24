@@ -177,20 +177,22 @@ const AdminDashboard = () => {
     const method = editingId ? "PUT" : "POST";
 
     try {
+      const payload = {
+        ...bookForm,
+        price: Number(bookForm.price) || 0,
+        stock: Number(bookForm.stock) || 0,
+        rating: Number(bookForm.rating) || 0,
+        numReviews: Number(bookForm.numReviews) || 0
+      };
+
       const res = await fetch(url, {
         method: method,
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${user.token}` },
-        body: JSON.stringify(bookForm)
+        body: JSON.stringify(payload)
       });
 
       if (res.ok) {
-        const data = await res.json();
-        console.log("Add/Edit Response:", data);
-        if (data._id) {
-          toast.success(editingId ? "Book Updated Successfully" : `Book Added! ID: ${data._id.slice(-6)}`);
-        } else {
-          toast.success(`Book Added but ID missing! Raw: ${JSON.stringify(data).substring(0, 100)}`);
-        }
+        toast.success(editingId ? "Book Updated Successfully" : "Book Added Successfully");
         setBookForm({ title: "", author: "", description: "", category: [], price: "", stock: "", rating: "", numReviews: "", imageURL: "" });
         setEditingId(null);
         setPage(1);
