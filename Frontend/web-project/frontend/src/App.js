@@ -18,6 +18,7 @@ import AdminDashboard from "./pages/AdminDashboard";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import AdminRoute from "./routes/AdminRoute";
 import Checkout from "./pages/Checkout";
+import OrderSuccess from "./pages/OrderSuccess"; // New Page
 
 import { Toaster } from "react-hot-toast";
 

@@ -1,103 +1,156 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { FaShoppingCart, FaUserShield, FaClipboardList, FaSignOutAlt } from "react-icons/fa";
-
+import { useCart } from "../context/CartContext";
+import { FaBook, FaShoppingCart, FaUser, FaSignOutAlt, FaSignInAlt, FaBars } from "react-icons/fa";
+import { useState } from "react";
 
 const Navbar = () => {
   const { user, logout } = useAuth();
-  const navigate = useNavigate(); // <-- add this
+  const { cart } = useCart();
+  const navigate = useNavigate();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const totalItems = cart.reduce((acc, item) => acc + (item.quantity || 1), 0);
 
   const handleLogout = () => {
-    logout();           // clear user
-    navigate("/login"); // redirect to login page
+    logout();
+    navigate("/login");
   };
 
   const styles = {
     nav: {
+      backgroundColor: "#2C3E50", // Midnight Blue
+      padding: "1rem 2rem",
       display: "flex",
       justifyContent: "space-between",
       alignItems: "center",
-      padding: "15px 30px",
-      backgroundColor: "#5D4037",
-      color: "#FFD700",
-      fontFamily: "Georgia, serif",
+      boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
+      position: "sticky",
+      top: 0,
+      zIndex: 1000,
+      color: "white"
     },
-    brand: { fontSize: "1.8rem", fontWeight: "bold", textDecoration: "none", color: "#FFD700" },
-    links: { display: "flex", gap: "20px", alignItems: "center" },
-    link: { color: "#FFD700", textDecoration: "none", fontWeight: "bold", transition: "0.3s" },
-    logoutBtn: {
-      backgroundColor: "#FFD700",
-      color: "#5D4037",
-      border: "none",
-      padding: "6px 12px",
-      borderRadius: "5px",
-      cursor: "pointer",
+    logo: {
+      fontSize: "1.5rem",
       fontWeight: "bold",
-      transition: "0.3s",
+      display: "flex",
+      alignItems: "center",
+      gap: "10px",
+      color: "#F1C40F", // Gold Accent
+      textDecoration: "none"
     },
+    menu: {
+      display: "flex",
+      gap: "25px",
+      alignItems: "center",
+      // Mobile handling would go here with media queries or JS
+    },
+    mobileMenu: {
+      display: isMenuOpen ? "flex" : "none",
+      flexDirection: "column",
+      position: "absolute",
+      top: "100%",
+      left: 0,
+      width: "100%",
+      backgroundColor: "#2C3E50",
+      padding: "20px",
+      gap: "15px",
+      boxShadow: "0 4px 6px rgba(0,0,0,0.1)"
+    },
+    link: {
+      color: "#ECF0F1", // Cloud White
+      textDecoration: "none",
+      fontSize: "1rem",
+      fontWeight: "500",
+      display: "flex",
+      alignItems: "center",
+      gap: "8px",
+      transition: "color 0.2s"
+    },
+    badge: {
+      backgroundColor: "#E74C3C", // Red
+      color: "white",
+      borderRadius: "50%",
+      padding: "2px 6px",
+      fontSize: "0.75rem",
+      marginLeft: "5px",
+      verticalAlign: "top"
+    },
+    hamburger: {
+      display: window.innerWidth < 768 ? "block" : "none",
+      cursor: "pointer",
+      fontSize: "1.5rem"
+    }
   };
-
-  // const allowedLinks removed in favor of direct checks
-
-  // Check if admin route - DISABLED DEBUG
-  // const location = useLocation();
-  // if (location.pathname.startsWith("/admin")) return null;
 
   return (
     <nav style={styles.nav}>
-      <Link to="/" style={styles.brand}>
-        PageTurner
+      <Link to="/" style={styles.logo}>
+        <FaBook /> PageTurner
       </Link>
 
-      <div style={styles.links}>
-        <Link to="/" style={styles.link}>
-          Home
-        </Link>
-
-        {/* PUBLIC: Visible to everyone */}
-        <Link to="/catalog" style={styles.link}>
-          Catalog
-        </Link>
-
-        {/* PUBLIC/CUSTOMER: Cart (Guests & Customers) */}
-        {(!user || user.role !== "admin") && (
-          <Link to="/cart" style={styles.link}>
-            <FaShoppingCart size={20} title="Cart" />
-          </Link>
-        )}
-
-        {/* GUEST ONLY */}
-        {!user && (
-          <>
-            <Link to="/login" style={styles.link}>Login</Link>
-            <Link to="/register" style={{ ...styles.link, border: "1px solid #FFD700", padding: "5px 10px", borderRadius: "5px" }}>Sign Up</Link>
-          </>
-        )}
-
-        {/* ADMIN ONLY */}
-        {user && user.role === "admin" && (
-          <Link to="/admin" style={styles.link}>
-            <FaUserShield size={20} title="Admin Dashboard" />
-          </Link>
-        )}
-
-        {/* CUSTOMER ONLY */}
-        {user && user.role === "customer" && (
-          <Link to="/my-orders" style={styles.link}>
-            <FaClipboardList size={20} title="My Orders" />
-          </Link>
-        )}
-
-        {user && (
-          <button onClick={handleLogout} style={styles.logoutBtn}>
-            <FaSignOutAlt size={20} title="Logout" />
-          </button>
-        )}
-
-        <Link to="/request-book" style={{ ...styles.link, fontSize: "0.8rem", marginLeft: "10px", fontStyle: "italic" }}>
-          Request a Book
-        </Link>
+      <div style={styles.hamburger} onClick={() => setIsMenuOpen(!isMenuOpen)}>
+        <FaBars />
       </div>
+
+      {/* Desktop Menu */}
+      <div style={{ ...styles.menu, display: window.innerWidth < 768 ? "none" : "flex" }}>
+        <Link to="/" style={styles.link}>Home</Link>
+        <Link to="/catalog" style={styles.link}>Catalog</Link>
+
+        <Link to="/cart" style={styles.link}>
+          <FaShoppingCart /> Cart
+          {totalItems > 0 && <span style={styles.badge}>{totalItems}</span>}
+        </Link>
+
+        {user ? (
+          <>
+            {user.role === "admin" && (
+              <Link to="/admin" style={{ ...styles.link, color: "#F1C40F" }}>Admin Dashboard</Link>
+            )}
+            <span style={{ color: "#bdc3c7" }}>|</span>
+            <div style={styles.link}><FaUser /> {user.name}</div>
+            <button
+              onClick={handleLogout}
+              style={{
+                background: "transparent",
+                border: "1px solid #E74C3C",
+                color: "#E74C3C",
+                padding: "5px 15px",
+                borderRadius: "5px",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                gap: "5px"
+              }}>
+              <FaSignOutAlt /> Logout
+            </button>
+          </>
+        ) : (
+          <Link to="/login" style={{ ...styles.link, color: "#F1C40F" }}>
+            <FaSignInAlt /> Login
+          </Link>
+        )}
+      </div>
+
+      {/* Mobile Menu Overlay */}
+      {isMenuOpen && window.innerWidth < 768 && (
+        <div style={styles.mobileMenu}>
+          <Link to="/" style={styles.link} onClick={() => setIsMenuOpen(false)}>Home</Link>
+          <Link to="/catalog" style={styles.link} onClick={() => setIsMenuOpen(false)}>Catalog</Link>
+          <Link to="/cart" style={styles.link} onClick={() => setIsMenuOpen(false)}>Cart ({totalItems})</Link>
+          {user ? (
+            <>
+              {user.role === "admin" && (
+                <Link to="/admin" style={{ ...styles.link, color: "#F1C40F" }} onClick={() => setIsMenuOpen(false)}>Admin Dashboard</Link>
+              )}
+              <button onClick={handleLogout} style={{ ...styles.link, background: "none", border: "none", cursor: "pointer", color: "#E74C3C" }}>Logout</button>
+            </>
+          ) : (
+            <Link to="/login" style={{ ...styles.link, color: "#F1C40F" }} onClick={() => setIsMenuOpen(false)}>Login</Link>
+          )}
+        </div>
+      )}
     </nav>
   );
 };

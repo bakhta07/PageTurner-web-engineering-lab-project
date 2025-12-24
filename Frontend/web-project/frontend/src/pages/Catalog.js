@@ -101,20 +101,24 @@ const Catalog = () => {
       marginBottom: "20px",
     },
     grid: {
-      display: "flex",
-      flexWrap: "wrap",
-      justifyContent: "center",
-      gap: "20px",
+      display: "grid",
+      gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))",
+      gap: "30px",
+      marginTop: "20px"
     },
     card: {
-      backgroundColor: "#FFF8E7",
-      width: "200px",
-      borderRadius: "12px",
+      backgroundColor: "#FFFFFF",
+      borderRadius: "15px",
       padding: "15px",
-      boxShadow: "0 6px 10px rgba(0,0,0,0.1)",
+      boxShadow: "0 4px 6px rgba(0,0,0,0.05)",
       textAlign: "center",
-      transition: "0.3s",
+      transition: "transform 0.3s, box-shadow 0.3s",
       cursor: "pointer",
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "space-between",
+      height: "100%",
+      border: "1px solid #EAEAEA"
     },
     image: {
       width: "100%",
@@ -192,21 +196,27 @@ const Catalog = () => {
           <div
             key={idx}
             style={styles.card}
-            onMouseEnter={(e) => (e.currentTarget.style.transform = "translateY(-5px)")}
-            onMouseLeave={(e) => (e.currentTarget.style.transform = "translateY(0)")}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = "translateY(-10px)";
+              e.currentTarget.style.boxShadow = "0 15px 30px rgba(0,0,0,0.15)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = "translateY(0)";
+              e.currentTarget.style.boxShadow = "0 4px 6px rgba(0,0,0,0.05)";
+            }}
           >
-            <Link to={`/product/${book._id}`} style={{ textDecoration: "none", color: "inherit" }}>
+            <Link to={`/product/${book._id}`} style={{ textDecoration: "none", color: "inherit", flex: 1 }}>
               <img src={book.imageURL || "https://via.placeholder.com/150"} alt={book.title} style={styles.image} />
               <div style={styles.bookTitle}>{book.title}</div>
             </Link>
             <div style={styles.bookAuthor}>{book.author}</div>
-            <div style={styles.bookGenre}>{book.genre}</div>
-            <div>${book.price}</div>
+            <div style={styles.bookGenre}>{book.category?.name || book.genre || "General"}</div>
+            <div style={{ fontSize: "1.2rem", fontWeight: "bold", color: "#F1C40F", margin: "10px 0" }}>${book.price}</div>
             <button
               style={styles.addBtn}
               onClick={() => handleAddToCart(book)}
-              onMouseEnter={(e) => (e.currentTarget.style.opacity = 0.8)}
-              onMouseLeave={(e) => (e.currentTarget.style.opacity = 1)}
+              onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = "#D4AC0D"; e.currentTarget.style.transform = "scale(1.05)"; }}
+              onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "#F1C40F"; e.currentTarget.style.transform = "scale(1)"; }}
             >
               Add to Cart
             </button>

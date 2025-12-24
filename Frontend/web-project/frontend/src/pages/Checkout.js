@@ -37,8 +37,8 @@ const Checkout = () => {
     // Clear cart
     clearCart();
 
-    alert("Order placed successfully!");
-    navigate("/home");
+    // alert("Order placed successfully!");
+    navigate("/order-success");
   };
 
   const styles = {
