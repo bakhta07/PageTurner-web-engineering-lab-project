@@ -22,7 +22,22 @@ import OrderSuccess from "./pages/OrderSuccess"; // New Page
 
 import { Toaster } from "react-hot-toast";
 
+import Footer from "./components/Footer";
+
 function App() {
+  const appStyles = {
+    display: "flex",
+    flexDirection: "column",
+    minHeight: "100vh",
+    backgroundColor: "#F5F5DC" // Global background to avoid white gaps
+  };
+
+  const contentStyles = {
+    flex: 1, // Pushes footer down
+    display: "flex",
+    flexDirection: "column"
+  };
+
   return (
     <Router>
       <Toaster position="top-center" containerStyle={{ zIndex: 99999 }} />
@@ -30,38 +45,43 @@ function App() {
         <CartProvider>
           <BooksProvider>
             <OrderProvider>
-              <Navbar />
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/admin-portal" element={<AdminLogin />} />
-                <Route path="/register" element={<Register />} />
-                <Route path="/oauth-success" element={<OAuthSuccess />} />
-                <Route path="/product/:id" element={<BookDetails />} />
-                <Route path="/my-orders" element={<MyOrders />} />
-                <Route path="/request-book" element={<RequestBook />} />
+              <div style={appStyles}>
+                <Navbar />
+                <div style={contentStyles}>
+                  <Routes>
+                    <Route path="/" element={<Home />} />
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/admin-portal" element={<AdminLogin />} />
+                    <Route path="/register" element={<Register />} />
+                    <Route path="/oauth-success" element={<OAuthSuccess />} />
+                    <Route path="/product/:id" element={<BookDetails />} />
+                    <Route path="/my-orders" element={<MyOrders />} />
+                    <Route path="/request-book" element={<RequestBook />} />
 
-                <Route path="/catalog" element={<Catalog />} />
-                <Route path="/cart" element={<Cart />} />
-                <Route
-                  path="/checkout"
-                  element={
-                    <ProtectedRoute>
-                      <Checkout />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route path="/order-success" element={<OrderSuccess />} />
+                    <Route path="/catalog" element={<Catalog />} />
+                    <Route path="/cart" element={<Cart />} />
+                    <Route
+                      path="/checkout"
+                      element={
+                        <ProtectedRoute>
+                          <Checkout />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route path="/order-success" element={<OrderSuccess />} />
 
-                <Route
-                  path="/admin"
-                  element={
-                    <AdminRoute>
-                      <AdminDashboard />
-                    </AdminRoute>
-                  }
-                />
-              </Routes>
+                    <Route
+                      path="/admin"
+                      element={
+                        <AdminRoute>
+                          <AdminDashboard />
+                        </AdminRoute>
+                      }
+                    />
+                  </Routes>
+                </div>
+                <Footer />
+              </div>
             </OrderProvider>
           </BooksProvider>
         </CartProvider>

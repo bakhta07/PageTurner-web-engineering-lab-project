@@ -21,10 +21,10 @@ const Home = () => {
   const styles = {
     container: {
       backgroundColor: "#F5F5DC",
-      minHeight: "100vh",
+      // minHeight handled by App layout
       fontFamily: "Georgia, serif",
       color: "#5D4037",
-      padding: "0"
+      padding: "0 0 40px 0" // Add bottom padding for breathing room
     },
     hero: {
       textAlign: "center",
@@ -129,11 +129,6 @@ const Home = () => {
             </Link>
           </div>
         ))}
-      </div>
-
-      {/* Footer */}
-      <div style={styles.footer}>
-        © 2025 PageTurner Online Bookstore
       </div>
     </div>
   );
