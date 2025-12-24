@@ -613,18 +613,16 @@ const AdminDashboard = () => {
                       e.currentTarget.style.borderColor = "#BDC3C7";
                       const file = e.dataTransfer.files[0];
                       if (file) {
-                        const formData = new FormData();
-                        formData.append("image", file);
-                        try {
-                          const res = await fetch(`${API_URL}/upload`, { method: "POST", body: formData });
-                          const data = await res.json();
-                          if (res.ok) {
-                            setBookForm({ ...bookForm, imageURL: API_BASE_URL + data.filePath });
-                            toast.success("Image Uploaded!");
-                          } else {
-                            toast.error(data.message || "Upload Failed");
-                          }
-                        } catch (err) { toast.error("Upload Error"); }
+                        if (file.size > 2 * 1024 * 1024) {
+                          toast.error("Image too large. Max 2MB.");
+                          return;
+                        }
+                        const reader = new FileReader();
+                        reader.onloadend = () => {
+                          setBookForm({ ...bookForm, imageURL: reader.result });
+                          toast.success("Image Ready!");
+                        };
+                        reader.readAsDataURL(file);
                       }
                     }}
                     onClick={() => document.getElementById("fileInput").click()}
@@ -634,19 +632,19 @@ const AdminDashboard = () => {
                       id="fileInput"
                       style={{ display: "none" }}
                       accept="image/*"
-                      onChange={async (e) => {
+                      onChange={(e) => {
                         const file = e.target.files[0];
                         if (file) {
-                          const formData = new FormData();
-                          formData.append("image", file);
-                          try {
-                            const res = await fetch(`${API_URL}/upload`, { method: "POST", body: formData });
-                            const data = await res.json();
-                            if (res.ok) {
-                              setBookForm({ ...bookForm, imageURL: API_BASE_URL + data.filePath });
-                              toast.success("Image Uploaded!");
-                            } else { toast.error("Upload Failed"); }
-                          } catch (err) { toast.error("Upload Error"); }
+                          if (file.size > 2 * 1024 * 1024) {
+                            toast.error("Image too large. Max 2MB.");
+                            return;
+                          }
+                          const reader = new FileReader();
+                          reader.onloadend = () => {
+                            setBookForm({ ...bookForm, imageURL: reader.result });
+                            toast.success("Image Ready!");
+                          };
+                          reader.readAsDataURL(file);
                         }
                       }}
                     />
